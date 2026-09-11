@@ -413,7 +413,7 @@
   }
   function resetCoin(face){
     const coin=$('shogi-coin');coin.classList.remove('tossing','landed');coin.dataset.face=face;
-    $('coin-copy').textContent='王将と玉将のコインを投げます。';$('coin-result').hidden=true;$('coin-start').hidden=true;$('coin-cancel').hidden=true;
+    $('coin-copy').textContent='王将と玉将のコインを投げます。';$('coin-readout').hidden=true;$('coin-result').hidden=true;$('coin-start').hidden=true;$('coin-cancel').hidden=true;
     void coin.offsetWidth;coin.classList.add('tossing');
   }
   async function showCoin(face,side){
@@ -421,7 +421,10 @@
     if(!coinDialog.open)coinDialog.showModal();syncCursor();
     await wait(matchMedia('(prefers-reduced-motion: reduce)').matches?250:1350);if(run!==coinRun)return false;
     $('shogi-coin').classList.remove('tossing');$('shogi-coin').classList.add('landed');
-    $('coin-face-result').textContent=(face==='jewel'?'玉将':'王将')+'の面';
+    $('coin-glyph').textContent=face==='jewel'?'玉':'王';
+    $('coin-turn').textContent=side===1?'先手':'後手';
+    $('coin-readout').hidden=false;
+    $('coin-face-result').textContent=(face==='jewel'?'玉':'王')+'の面';
     $('coin-side-result').textContent='あなたは'+(side===1?'先手':'後手')+'です';
     $('coin-result').hidden=false;$('coin-copy').textContent='先手・後手が決まりました。';
     $('coin-start').hidden=false;$('coin-start').focus();
