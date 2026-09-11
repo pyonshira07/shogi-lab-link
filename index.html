@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>将棋ラボへ接続中</title>
+<style>
+html{color-scheme:dark}body{margin:0;min-height:100dvh;display:grid;place-items:center;background:#111a1d;color:#eef3ef;font-family:-apple-system,BlinkMacSystemFont,"Yu Gothic",sans-serif}.card{width:min(86vw,390px);padding:32px;border:1px solid #40564f;border-radius:14px;background:#1a282a;text-align:center}.mark{width:42px;height:48px;margin:auto;display:grid;place-items:center;clip-path:polygon(50% 0,90% 20%,100% 100%,0 100%,10% 20%);background:#eac389;color:#2b2c25;font:700 27px serif}h1{font-size:20px;margin:18px 0 8px}p{font-size:13px;color:#aebdb8}button{margin-top:12px;padding:10px 18px;border:0;border-radius:7px;background:#a7e3cd;color:#18322b;font-weight:700;cursor:pointer}[hidden]{display:none}
+</style>
+</head>
+<body>
+<main class="card">
+<div class="mark" aria-hidden="true">将</div>
+<h1>将棋ラボへ接続しています</h1>
+<p id="message">少しだけお待ちください。</p>
+<button id="retry" type="button" hidden>もう一度つなぐ</button>
+</main>
+<script>
+const message=document.querySelector('#message'),retry=document.querySelector('#retry');
+async function connect(){
+  retry.hidden=true;message.textContent='少しだけお待ちください。';
+  try{
+    const response=await fetch('https://api.github.com/repos/pyonshira07/shogi-lab-link/contents/target.json?t='+Date.now(),{cache:'no-store'});
+    if(!response.ok)throw new Error();
+    const file=await response.json(),data=JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(file.content.replace(/\s/g,'')),c=>c.charCodeAt(0))));
+    const target=new URL(data.url);target.search=location.search;target.hash=location.hash;location.replace(target.href);
+  }catch{message.textContent='ゲームを起動してから、もう一度お試しください。';retry.hidden=false;}
+}
+retry.addEventListener('click',connect);connect();
+</script>
+</body>
+</html>
