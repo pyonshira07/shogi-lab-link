@@ -12,4 +12,5 @@
 
 - やねうら王WASM: [GPLv3](vendor/yaneuraou/LICENSE.md) / [対応ソース](https://github.com/mizar/YaneuraOu.wasm/tree/799183514172909f19ee975b81f025a2bc59bb8d)
 - PeerJS: [MIT License](vendor/peerjs/LICENSE)
+- coi-serviceworker: [MIT License](vendor/coi-serviceworker/LICENSE)
 - 開始音声: VOICEVOX:No.7
