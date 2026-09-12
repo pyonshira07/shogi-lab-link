@@ -200,7 +200,8 @@
       const t=Math.abs(state.board[selected.from]);
       choose('成りますか？',E.FULL_NAMES[t]+'を'+E.FULL_NAMES[t+8]+'にできます。',E.NAMES[t],[
         {label:'成る',primary:true,run:()=>humanMove(options.find(m=>m.promote))},
-        {label:'成らない',run:()=>humanMove(options.find(m=>!m.promote))}
+        {label:'成らない',run:()=>humanMove(options.find(m=>!m.promote))},
+        {label:'キャンセル',run:()=>render()}
       ]);return;
     }
     if(options.length){humanMove(options[0]);return;}
