@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">シンプル将棋</title>
+  <rect width="512" height="512" rx="96" fill="#111a1d"/>
+  <path d="M256 56 404 126 438 430H74l34-304Z" fill="#eac389" stroke="#8f6938" stroke-width="18" stroke-linejoin="round"/>
+  <path d="M256 82 379 140 407 398H105l28-258Z" fill="none" stroke="#f9daa4" stroke-width="8"/>
+  <text x="256" y="330" text-anchor="middle" font-family="Yu Mincho,Hiragino Mincho ProN,serif" font-size="220" font-weight="700" fill="#2b2c25">将</text>
+</svg>

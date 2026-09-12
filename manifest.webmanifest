@@ -1,0 +1,19 @@
+{
+  "name": "シンプル将棋",
+  "short_name": "シンプル将棋",
+  "description": "盤と向き合う、気軽な将棋。AI対戦、友達対戦、詰将棋。",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111a1d",
+  "theme_color": "#111a1d",
+  "icons": [
+    {
+      "src": "icon.svg?v=20260912-1",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
