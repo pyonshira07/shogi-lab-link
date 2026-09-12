@@ -132,7 +132,9 @@
     $('move-count').textContent=mode==='puzzle'?state.ply+' / '+puzzle.depth+' 手':state.ply+' 手目';
     $('puzzle-toolbar').hidden=mode!=='puzzle';$('puzzle-hint').disabled=!isHuman();$('puzzle-answer').disabled=!isHuman();
     if(puzzle&&mode==='puzzle'){$('puzzle-level-label').textContent=ShogiPuzzles.names[puzzle.depth]+'・'+puzzle.depth+'手詰　'+(puzzleIndex+1)+' / '+ShogiPuzzles.list(puzzle.depth).length;$('puzzle-title').textContent=puzzle.title;}$('undo').disabled=undoStack.length===0;
-    $('undo').hidden=mode==='online'||mode==='puzzle';$('resign').hidden=mode!=='online';$('resign').disabled=!online?.connected||!onlineInfo?.began||Boolean(finished)||onlineBusy;
+    $('undo').hidden=mode==='online'||mode==='puzzle';
+    $('resign').hidden=!started||mode==='puzzle'||Boolean(finished);
+    $('resign').disabled=mode==='online'?(!online?.connected||!onlineInfo?.began||Boolean(finished)||onlineBusy):mode!=='ai'||Boolean(finished);
     $('invite-button').hidden=mode!=='online'||playerSide!==1;
     $('undo').title='自分の直前の一手と、AIの応手を戻します';
     $('level-badge').textContent=mode==='puzzle'?'詰将棋・'+puzzle.depth+'手詰':mode==='online'?'友達と対戦':started?'AI・'+ShogiAI.levels[level].name:'AI対戦';
@@ -386,8 +388,14 @@
     try{await navigator.clipboard.writeText($('invite-url').value);$('invite-message').textContent='コピーしました。友達に送ってください。';}
     catch{$('invite-url').focus();$('invite-url').select();$('invite-message').textContent='URLを選択しました。コピーして友達に送ってください。';}
   });
+  function resignGame(){
+    if(finished||!started)return;
+    if(mode==='online'){online?.send({type:'resign'});return;}
+    if(mode!=='ai')return;
+    stopAI();greetingSource?.stop();selected=null;finished={winner:-playerSide,reason:'resign'};render();
+  }
   $('resign').addEventListener('click',()=>choose('投了しますか？','投了すると、相手の勝ちで対局が終了します。','礼',[
-    {label:'続ける'},{label:'投了する',primary:true,run:()=>online?.send({type:'resign'})}
+    {label:'続ける'},{label:'投了する',primary:true,run:resignGame}
   ]));
   function restart(nextLevel,side=1){
     clearTimeout(puzzleFailTimer);puzzleFailTimer=null;stopAI();leaveOnline();greetingSource?.stop();level=nextLevel;playerSide=side;started=true;gameSerial++;resultShownKey='';resultDialog.close();
