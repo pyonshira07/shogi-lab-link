@@ -17,6 +17,35 @@ const ShogiSchoolCore=(()=>{
   if(index<0)items.push(q);else items[index]=q;
   return {version:1,revision:library.revision+1,items};
  }
- return {sample,clean,put,copy};
+ const baseType=p=>Math.abs(p)>8?Math.abs(p)-8:Math.abs(p);
+ function remaining(q,p){
+  const t=baseType(p),total=[0,18,4,4,4,4,2,2,1][t];
+  if(t===8)return total-q.pieces.filter(([,x])=>x===p).length;
+  return total-q.pieces.filter(([,x])=>baseType(x)===t).length-q.hand.filter(x=>x===t).length;
+ }
+ // Picking up a piece does not change the position. A placement is one atomic edit.
+ function place(q,held,target){
+  if(!held||![1,2,3,4,5,6,7,8,9,10,11,12,14,15].includes(Math.abs(held.piece)))throw Error('駒を選んでください。');
+  if(target!=='hand'&&target!=='box'&&(!Number.isInteger(target)||target<0||target>80))throw Error('盤のマスを選んでください。');
+  const next=copy(q),p=held.piece,t=baseType(p),at=i=>next.pieces.find(([s])=>s===i)?.[1]||0;
+  const set=(i,x)=>{next.pieces=next.pieces.filter(([s])=>s!==i);if(x)next.pieces.push([i,x]);};
+  if(held.source==='board'){
+   if(at(held.from)!==held.original||baseType(held.original)!==t)throw Error('駒を選び直してください。');
+   set(held.from,0);
+  }else if(held.source==='hand'){
+   const i=next.hand.indexOf(t);if(i<0)throw Error('持ち駒を選び直してください。');next.hand.splice(i,1);
+  }else if(held.source==='palette'){
+   if(remaining(q,p)<1&&target!=='box')throw Error('この駒はすべて使っています。盤の駒を動かしてください。');
+  }else throw Error('駒を選び直してください。');
+  if(target==='hand'){
+   if(t===8)throw Error('玉は持ち駒にできません。');next.hand.push(t);
+  }else if(target!=='box'){
+   const other=at(target);if(other&&held.source==='board'&&target!==held.from)set(held.from,other);
+   set(target,p);
+  }
+  if([1,2,3,4,5,6,7,8,-8].some(x=>remaining(next,x)<0))throw Error('駒の枚数が多すぎます。玉は自分と相手に1枚ずつです。');
+  return next;
+ }
+ return {sample,clean,put,copy,baseType,remaining,place};
 })();
 if(typeof module!=='undefined'&&module.exports)module.exports=ShogiSchoolCore;
