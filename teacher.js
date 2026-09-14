@@ -24,7 +24,7 @@ const ShogiTeacher=(()=>{
  }
  function explanation(puzzle,step,index,E){
   const {state:s,before,move:m}=step;
-  if(!m)return {title:'まずは、玉の逃げ道を見てみよう。',paragraphs:[focus[puzzle.id],'王手をかけるだけでなく、「その次に玉はどこへ行けるかな？」と一つ先を考えるのがコツです。']};
+  if(!m)return {title:'まずは、玉の逃げ道を見てみよう。',paragraphs:[(puzzle.hint||focus[puzzle.id]||puzzle.lesson),'王手をかけるだけでなく、「その次に玉はどこへ行けるかな？」と一つ先を考えるのがコツです。']};
   if(before.turn===-1)return {title:'相手も、いちばん粘れる手を選びます。',paragraphs:m.drop?[
    pos(m.to)+'に'+E.FULL_NAMES[m.drop]+'を打ち、王手の線をさえぎりました。これが「合駒」です。',
    '玉が逃げる手だけを読んでいると、この受けを見落としがちです。次は、間の駒があっても王手できる方法を探しましょう。'
@@ -33,7 +33,7 @@ const ShogiTeacher=(()=>{
   const t=m.drop||Math.abs(before.board[m.from]),piece=E.FULL_NAMES[t];
   if(!mate)return {title:piece+'を働かせて、次の形を作ります。',paragraphs:[
    pos(m.to)+'へ'+(m.drop?piece+'を打つ':piece+'を動かす')+(m.promote?'と同時に成る':'')+'ことで、王手になります。',
-   index===1?focus[puzzle.id]:'仲間の駒の利きも使いながら、玉を逃がす方向を限っていきます。最後の一手につながる王手です。',
+   index===1?(puzzle.hint||focus[puzzle.id]||puzzle.lesson):'仲間の駒の利きも使いながら、玉を逃がす方向を限っていきます。最後の一手につながる王手です。',
    moves.some(x=>x.drop)?'ここは玉を逃がす以外に、合駒で受ける手もあります。相手の応手まで確かめましょう。':'相手の玉がどこへ逃げられるか、次の図で確かめてみましょう。'
   ]};
   const krow=Math.floor(king/9),kcol=king%9,adjacent=Math.max(Math.abs(Math.floor(m.to/9)-krow),Math.abs(m.to%9-kcol))===1;

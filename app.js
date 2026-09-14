@@ -515,7 +515,7 @@
     $('hint-stage').textContent=['','ヒント 1 / 3 · 考え方','ヒント 2 / 3 · 使う駒','ヒント 3 / 3 · 行き先'][puzzleHint];
     const t=hintMove.drop||Math.abs(state.board[hintMove.from]);
     $('hint-title').textContent=puzzleHint===1?'まず、どこに注目しよう？':puzzleHint===2?'この駒を、働かせてみよう。':'この一手を、試してみよう。';
-    $('hint-copy').textContent=puzzleHint===1?(state.ply===0?ShogiTeacher.focus[puzzle.id]:'玉の位置が変わりましたね。新しく空いた逃げ道を、仲間の駒と協力してふさぐ王手を探してみましょう。'):
+    $('hint-copy').textContent=puzzleHint===1?(state.ply===0?(puzzle.hint||ShogiTeacher.focus[puzzle.id]||puzzle.lesson):'玉の位置が変わりましたね。新しく空いた逃げ道を、仲間の駒と協力してふさぐ王手を探してみましょう。'):
       puzzleHint===2?(hintMove.drop?'持ち駒の':ShogiTeacher.pos(hintMove.from)+'の')+E.FULL_NAMES[t]+'を使います。王手になるだけでなく、玉が取れない・逃げにくい場所を探してみましょう。':
       ShogiTeacher.label(state,hintMove,E)+'です。'+(hintMove.promote?'ここでは成ることも大切です。成ったあとの利きを見てみましょう。':'その駒が、どの逃げ道をふさいでいるかも見てみましょう。');
     $('hint-diagram').innerHTML=ShogiTeacher.diagram(puzzle,{state,move:puzzleHint===3?hintMove:puzzleHint===2?{from:hintMove.from,to:null}:null},E);
