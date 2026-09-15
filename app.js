@@ -458,17 +458,42 @@
   $('coin-cancel').addEventListener('click',()=>{closeCoin();openStart();});
   coinDialog.addEventListener('cancel',event=>event.preventDefault());
   $('undo').addEventListener('click',undo);
+  function renderPuzzleList(filter='all'){
+    const list=$('puzzle-list');list.replaceChildren();list.dataset.filter=filter;
+    document.querySelectorAll('[data-puzzle-filter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.puzzleFilter===filter)));
+    let count=0;
+    for(const depth of [1,3,5]){
+      if(filter!=='all'&&Number(filter)!==depth)continue;
+      const group=document.createElement('section');group.className='puzzle-group';
+      const heading=document.createElement('h3');heading.id='puzzle-group-'+depth;
+      const name=document.createElement('span');name.textContent=ShogiPuzzles.names[depth];
+      const length=document.createElement('small');length.textContent=depth+'手詰';
+      heading.append(name,length);group.setAttribute('aria-labelledby',heading.id);
+      const choices=document.createElement('div');choices.className='puzzle-choices';
+      ShogiPuzzles.list(depth).forEach((item,index)=>{
+        const button=document.createElement('button');button.className='puzzle-choice';button.dataset.puzzleId=item.id;
+        button.setAttribute('aria-label',ShogiPuzzles.names[depth]+'・'+depth+'手詰 第'+(index+1)+'問 '+item.title+'を解く');
+        const number=document.createElement('small');number.textContent='第'+(index+1)+'問';
+        const title=document.createElement('span');title.textContent=item.title;
+        if(mode==='puzzle'&&puzzle?.id===item.id){button.setAttribute('aria-current','true');number.textContent+=' · プレイ中';}
+        button.append(number,title);button.addEventListener('click',()=>startPuzzle(depth,index));choices.append(button);count++;
+      });
+      group.append(heading,choices);list.append(group);
+    }
+    list.scrollTop=0;$('puzzle-list-status').textContent=count+'問から選べます。';
+  }
   function openPuzzles(){
     clearTimeout(puzzleFailTimer);puzzleFailTimer=null;
     closeCoin();for(const modal of [dialog,startDialog,infoDialog,pieceDialog,inviteDialog,resultDialog,puzzleFailDialog,hintDialog,lessonDialog])if(modal.open)modal.close();
-    selected=null;syncCursor();puzzleDialog.showModal();
+    selected=null;syncCursor();renderPuzzleList();puzzleDialog.showModal();
   }
   function startPuzzle(depth,index=0){
+    const nextPuzzle=ShogiPuzzles.list(depth)[index];if(!nextPuzzle)return;
     clearTimeout(puzzleFailTimer);puzzleFailTimer=null;
     stopAI();leaveOnline();greetingSource?.stop();
     closeCoin();for(const modal of [dialog,startDialog,infoDialog,pieceDialog,inviteDialog,resultDialog,puzzleDialog,puzzleFailDialog,hintDialog,lessonDialog])if(modal.open)modal.close();
     E=createShogiEngine({allowMissingKing:true});mode='puzzle';playerSide=1;started=true;
-    puzzleDepth=depth;puzzleIndex=index;puzzle=ShogiPuzzles.list(depth)[index];puzzleHint=0;puzzleMistake=false;puzzleFailed=false;
+    puzzleDepth=depth;puzzleIndex=index;puzzle=nextPuzzle;puzzleHint=0;puzzleMistake=false;puzzleFailed=false;
     gameSerial++;resultShownKey='';state=ShogiPuzzles.position(puzzle);records=[E.record(state)];undoStack=[];
     selected=null;finished=null;legal=E.legalMoves(state);
     inspectPiece(puzzle.hand[0]||Math.abs(puzzle.pieces.find(([,p])=>p>0)?.[1])||5);render();
@@ -497,7 +522,7 @@
   }
   $('puzzle-button').addEventListener('click',openPuzzles);
   $('puzzle-close').addEventListener('click',()=>puzzleDialog.close());
-  document.querySelectorAll('[data-puzzle-level]').forEach(button=>button.addEventListener('click',()=>startPuzzle(Number(button.dataset.puzzleLevel))));
+  document.querySelectorAll('[data-puzzle-filter]').forEach(button=>button.addEventListener('click',()=>renderPuzzleList(button.dataset.puzzleFilter)));
   $('puzzle-reset').addEventListener('click',()=>startPuzzle(puzzleDepth,puzzleIndex));
   $('puzzle-fail-retry').addEventListener('click',()=>startPuzzle(puzzleDepth,puzzleIndex));
   $('puzzle-fail-hint').addEventListener('click',()=>{startPuzzle(puzzleDepth,puzzleIndex);openPuzzleHint();});
@@ -607,7 +632,7 @@
     const own=onlineInfo?.rematch?.[onlineSeat],other=onlineInfo?.rematch?.[-onlineSeat];
     const available=mode!=='online'||Boolean(online?.connected&&onlineInfo?.presence.every(Boolean)&&!onlineInfo?.left?.[-onlineSeat]&&finished.reason!=='left'&&!onlineError);
     $('result-rematch').disabled=!available||Boolean(mode==='online'&&own);
-    $('result-settings').textContent=mode==='puzzle'?'難易度を選ぶ':'新しい対局・難易度変更';
+    $('result-settings').textContent=mode==='puzzle'?'問題を選ぶ':'新しい対局・難易度変更';
     $('result-rematch').textContent=mode==='puzzle'?(puzzleIndex+1<ShogiPuzzles.list(puzzleDepth).length?'次の問題':'最初の問題へ'):mode==='online'&&other&&!own?'再戦を受ける':'もう一度対戦';
     $('result-message').textContent=mode==='puzzle'?state.ply+'手で詰みました。':mode==='ai'?'同じ難易度で、もう一局。':!available?'相手が戻ると、再戦できます。':own?'再戦をお願いしました。相手の返事を待っています。':other?'相手がもう一局を希望しています。':'もう一局は、お互いが選ぶと始まります。';
   }

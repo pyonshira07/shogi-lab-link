@@ -10,7 +10,7 @@
 <link rel="manifest" href="manifest.webmanifest?v=20260912-1">
 <script>window.coi={quiet:true,coepCredentialless:()=>true};</script>
 <script src="coi-serviceworker.js"></script>
-<link rel="stylesheet" href="style.css?v=20260915-1">
+<link rel="stylesheet" href="style.css?v=20260915-5">
 <script src="engine.js" defer>
 </script>
 <script src="sounds.js" defer>
@@ -27,7 +27,7 @@
 </script>
 <script src="teacher.js?v=20260915-1" defer>
 </script>
-<script src="app.js?v=20260915-1" defer>
+<script src="app.js?v=20260915-5" defer>
 </script>
 </head>
 <body>
@@ -253,27 +253,18 @@
 </dialog>
 <dialog id="puzzle-dialog" aria-labelledby="puzzle-dialog-title">
 <span class="dialog-kicker">詰将棋</span>
-<h2 id="puzzle-dialog-title">詰みを、見つけよう。</h2>
-<p>王手を続けて、相手の玉を詰ませましょう。</p>
-<div class="puzzle-levels">
-<button data-puzzle-level="1">
-<span>初級</span>
-<b>1手詰</b>
-<small>まずは最後の一手から</small>
-</button>
-<button data-puzzle-level="3">
-<span>中級</span>
-<b>3手詰</b>
-<small>相手の逃げ方も読んでみよう</small>
-</button>
-<button data-puzzle-level="5">
-<span>上級</span>
-<b>5手詰</b>
-<small>もう一歩先まで組み立てよう</small>
-</button>
+<h2 id="puzzle-dialog-title">好きな一問から。</h2>
+<p class="puzzle-intro">全18問。解きたい問題を選んでください。</p>
+<div class="puzzle-filters" role="group" aria-label="問題を難易度で絞り込む">
+<button data-puzzle-filter="all" aria-pressed="true" aria-controls="puzzle-list">すべて</button>
+<button data-puzzle-filter="1" aria-pressed="false" aria-controls="puzzle-list">初級</button>
+<button data-puzzle-filter="3" aria-pressed="false" aria-controls="puzzle-list">中級</button>
+<button data-puzzle-filter="5" aria-pressed="false" aria-controls="puzzle-list">上級</button>
 </div>
-<a class="school-launch" href="https://script.google.com/macros/s/AKfycbyKrZH1NFLY7WQRr3n3oBF-FQ9c5rxRsoY7ybPRa_ZXduwVXoyGb7knVCk_8dW6wAG_/exec" target="_blank" rel="noopener">詰将棋ツクール <small>自分で問題を作る・10問まで保存</small></a>
-<p class="puzzle-footnote">各6問・合計18問。相手の応手も含めて数えます。<br>玉方は、盤とあなたの持ち駒以外の駒を合駒に使えます。</p>
+<p id="puzzle-list-status" class="sr-only" role="status"></p>
+<div id="puzzle-list" class="puzzle-catalog" data-filter="all" aria-label="詰将棋の問題一覧"></div>
+<a class="school-launch" href="https://script.google.com/macros/s/AKfycbyKrZH1NFLY7WQRr3n3oBF-FQ9c5rxRsoY7ybPRa_ZXduwVXoyGb7knVCk_8dW6wAG_/exec" target="_blank" rel="noopener"><svg class="creator-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="4" y="13" width="32" height="30" rx="3" fill="#EAC389"/><path d="M14.5 14v28M25.5 14v28M5 23h30M5 33h30" stroke="#8C693B" stroke-width="1.2"/><path d="m30 5 8 4 3 16H19l3-16 8-4Z" fill="#FFE4AE" stroke="#8C693B" stroke-width="1.5" stroke-linejoin="round"/><path d="M26 14h8m-4-4v9" stroke="#59432B" stroke-width="2" stroke-linecap="round"/><path d="m30 38 10-10 4 4-10 10-6 2 2-6Z" fill="#F3F4EC" stroke="#253136" stroke-width="1.5" stroke-linejoin="round"/><path d="m38 30 4 4m-12 4 4 4" stroke="#253136" stroke-width="1.5"/></svg><span>詰将棋ツクール<small>盤に駒を並べて、自分の問題を作る</small></span><span class="school-launch-arrow" aria-hidden="true">↗</span></a>
+<p class="puzzle-footnote">1・3・5手詰は、相手の手も含めて数えます。<br>玉方は、盤とあなたの持ち駒以外の駒を合駒に使えます。</p>
 <div class="dialog-actions">
 <button id="puzzle-close">戻る</button>
 </div>
@@ -337,7 +328,7 @@
 </div>
 <div class="dialog-actions lesson-actions">
 <button id="lesson-next-puzzle" class="primary">次の問題</button>
-<button id="lesson-level">難易度を選ぶ</button>
+<button id="lesson-level">問題を選ぶ</button>
 <button id="lesson-board">盤面を見る</button>
 </div>
 </dialog>
